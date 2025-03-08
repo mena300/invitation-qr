@@ -22,9 +22,14 @@
             text-align: center;
         }
         .status {
-            color: #28a745;
             font-size: 24px;
             margin: 20px 0;
+        }
+        .status.valid {
+            color: #28a745;
+        }
+        .status.invalid {
+            color: #dc3545;
         }
         .guest-info {
             margin: 20px 0;
@@ -38,16 +43,21 @@
         }
         .verified-icon {
             font-size: 48px;
-            color: #28a745;
             margin: 20px 0;
+        }
+        .verified-icon.valid {
+            color: #28a745;
+        }
+        .verified-icon.invalid {
+            color: #dc3545;
         }
     </style>
 </head>
 <body>
     <div class="invitation-card">
         <h1>بطاقة الدعوة</h1>
-        <div class="verified-icon">✓</div>
-        <div class="status">دعوة صالحة</div>
+        <div id="statusIcon" class="verified-icon">✓</div>
+        <div id="statusText" class="status">جاري التحقق...</div>
         
         <div class="guest-info">
             <p><strong>اسم الضيف:</strong> <span id="guestName"></span></p>
@@ -56,12 +66,32 @@
     </div>
 
     <script>
-        // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name');
+        const id = urlParams.get('id');
         
-        // Display information
-        document.getElementById('guestName').textContent = urlParams.get('name') || '';
-        document.getElementById('invitationId').textContent = urlParams.get('id') || '';
+        document.getElementById('guestName').textContent = name || '';
+        document.getElementById('invitationId').textContent = id || '';
+        
+        // Check QR code status with Google Apps Script
+        fetch('YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL?id=' + id)
+            .then(response => response.text())
+            .then(status => {
+                const statusIcon = document.getElementById('statusIcon');
+                const statusText = document.getElementById('statusText');
+                
+                if (status === 'valid') {
+                    statusIcon.textContent = '✓';
+                    statusIcon.className = 'verified-icon valid';
+                    statusText.textContent = 'دعوة صالحة';
+                    statusText.className = 'status valid';
+                } else {
+                    statusIcon.textContent = '✕';
+                    statusIcon.className = 'verified-icon invalid';
+                    statusText.textContent = 'تم استخدام هذه الدعوة مسبقاً';
+                    statusText.className = 'status invalid';
+                }
+            });
     </script>
 </body>
 </html>
