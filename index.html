@@ -96,8 +96,10 @@
         const statusIcon = document.getElementById('statusIcon');
         const statusText = document.getElementById('statusText');
 
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbyH-_20gLIFLnL8XMCiPMmZeFxfr0DoMGGQgU4a0SLecx2SVTsA2ffNgGJlM9zK7gJD/exec';
+
         // First check status without marking as used
-        fetch('YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL?id=' + id)
+        fetch(webAppUrl + '?id=' + encodeURIComponent(id))
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'valid') {
@@ -112,18 +114,30 @@
                     statusText.textContent = data.message;
                     statusText.className = 'status invalid';
                 }
+            })
+            .catch(error => {
+                statusIcon.textContent = '!';
+                statusIcon.className = 'verified-icon invalid';
+                statusText.textContent = 'حدث خطأ في التحقق';
+                statusText.className = 'status invalid';
+                console.error('Error:', error);
             });
 
         // Handle button click
         useButton.addEventListener('click', function() {
             this.disabled = true;
-            fetch('https://script.google.com/macros/s/AKfycbx84Y5AjFfXepPAGfteP86DYfFe0vmCqG8Lp70DFSS6qJOp3-vPOn25vA8EL3ULy0Jd/exec' + id + '&markAsUsed=true')
+            fetch(webAppUrl + '?id=' + encodeURIComponent(id) + '&markAsUsed=true')
                 .then(response => response.json())
                 .then(data => {
                     statusIcon.textContent = '✓';
                     statusText.textContent = 'تم تأكيد الدخول';
                     this.textContent = 'تم التأكيد';
                     this.style.backgroundColor = '#6c757d';
+                })
+                .catch(error => {
+                    this.disabled = false;
+                    statusText.textContent = 'حدث خطأ، حاول مرة أخرى';
+                    console.error('Error:', error);
                 });
         });
     </script>
