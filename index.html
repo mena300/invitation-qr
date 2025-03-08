@@ -51,18 +51,37 @@
         .verified-icon.invalid {
             color: #dc3545;
         }
+        .button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="invitation-card">
         <h1>بطاقة الدعوة</h1>
-        <div id="statusIcon" class="verified-icon">✓</div>
+        <div id="statusIcon" class="verified-icon">⌛</div>
         <div id="statusText" class="status">جاري التحقق...</div>
         
         <div class="guest-info">
             <p><strong>اسم الضيف:</strong> <span id="guestName"></span></p>
             <p><strong>رقم الدعوة:</strong> <span id="invitationId"></span></p>
         </div>
+
+        <button id="useButton" class="button hidden">تأكيد الدخول</button>
     </div>
 
     <script>
@@ -73,25 +92,40 @@
         document.getElementById('guestName').textContent = name || '';
         document.getElementById('invitationId').textContent = id || '';
         
-        // Check QR code status with Google Apps Script
-        fetch('https://script.google.com/macros/s/AKfycbyHrm8qNu3qD2KNW09qb4YpUuLjVgweUdFKzck2SCqyBFb2f0ER3OX6vhx5mbG333-h/exec' + id)
-            .then(response => response.text())
-            .then(status => {
-                const statusIcon = document.getElementById('statusIcon');
-                const statusText = document.getElementById('statusText');
-                
-                if (status === 'valid') {
+        const useButton = document.getElementById('useButton');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusText = document.getElementById('statusText');
+
+        // First check status without marking as used
+        fetch('YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL?id=' + id)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'valid') {
                     statusIcon.textContent = '✓';
                     statusIcon.className = 'verified-icon valid';
-                    statusText.textContent = 'دعوة صالحة';
+                    statusText.textContent = data.message;
                     statusText.className = 'status valid';
+                    useButton.classList.remove('hidden');
                 } else {
                     statusIcon.textContent = '✕';
                     statusIcon.className = 'verified-icon invalid';
-                    statusText.textContent = 'تم استخدام هذه الدعوة مسبقاً';
+                    statusText.textContent = data.message;
                     statusText.className = 'status invalid';
                 }
             });
+
+        // Handle button click
+        useButton.addEventListener('click', function() {
+            this.disabled = true;
+            fetch('https://script.google.com/macros/s/AKfycbx84Y5AjFfXepPAGfteP86DYfFe0vmCqG8Lp70DFSS6qJOp3-vPOn25vA8EL3ULy0Jd/exec' + id + '&markAsUsed=true')
+                .then(response => response.json())
+                .then(data => {
+                    statusIcon.textContent = '✓';
+                    statusText.textContent = 'تم تأكيد الدخول';
+                    this.textContent = 'تم التأكيد';
+                    this.style.backgroundColor = '#6c757d';
+                });
+        });
     </script>
 </body>
 </html>
