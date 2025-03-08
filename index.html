@@ -74,7 +74,7 @@
         document.getElementById('invitationId').textContent = id || '';
         
         // Check QR code status with Google Apps Script
-        fetch('YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL?id=' + id)
+        fetch('https://script.google.com/macros/s/AKfycbyHrm8qNu3qD2KNW09qb4YpUuLjVgweUdFKzck2SCqyBFb2f0ER3OX6vhx5mbG333-h/exec' + id)
             .then(response => response.text())
             .then(status => {
                 const statusIcon = document.getElementById('statusIcon');
