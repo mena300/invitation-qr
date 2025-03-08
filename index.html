@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بطاقة الدعوة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            direction: rtl;
+        }
+        .invitation-card {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .status {
+            color: #28a745;
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .guest-info {
+            margin: 20px 0;
+            text-align: right;
+        }
+        .guest-info p {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .verified-icon {
+            font-size: 48px;
+            color: #28a745;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="invitation-card">
+        <h1>بطاقة الدعوة</h1>
+        <div class="verified-icon">✓</div>
+        <div class="status">دعوة صالحة</div>
+        
+        <div class="guest-info">
+            <p><strong>اسم الضيف:</strong> <span id="guestName"></span></p>
+            <p><strong>رقم الدعوة:</strong> <span id="invitationId"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Display information
+        document.getElementById('guestName').textContent = urlParams.get('name') || '';
+        document.getElementById('invitationId').textContent = urlParams.get('id') || '';
+    </script>
+</body>
+</html>
